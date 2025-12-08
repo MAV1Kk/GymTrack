@@ -1,158 +1,150 @@
 # GymTrack
 
-**GymTrack** — навчальний сервіс для обліку тренувань користувача.
+Монолітний веб‑застосунок для ведення профілю користувача та історії тренувань. Проєкт виконується в рамках лабораторних робіт (ЛР0–ЛР6) з розробки ПЗ.
 
----
+## Функціонал
 
-## Лабораторна робота №0 — Вибір ідеї
+- **Users**
+  - створення профілю користувача
+  - перегляд профілю
+  - оновлення параметрів (вага/зріст/ціль)
+- **Workouts**
+  - створення тренування
+  - перегляд списку тренувань користувача
+  - оновлення тренування (status, notes)
 
-### Ідея
+## Технології
 
-- **User Service** зберігає профіль користувача (параметри, базові дані).
-- **Workout Service** створює та веде список тренувань, прив’язаних до користувача.
+- **Node.js + TypeScript (ESM, `"type": "module"`)**
+- **NestJS**
+- **PostgreSQL** (через Docker Compose)
+- **Prisma** (міграції + ORM)
+- **Jest** (unit + e2e)
+- **ESLint (flat config) + Prettier**
+- **Husky + lint-staged + commitlint (Conventional Commits)**
+- **pnpm**
 
-### Команда / Виконавець
+## Структура репозиторію
 
-- Виконавець: **MAV1k** (індивідуально)
+- `src/` — код застосунку (модулі `users`, `workouts`, `prisma`)
+- `prisma/` — схема Prisma та міграції
+- `docs/` — документація ЛР2 (архітектура, ER, сценарії)
+- `test/` — e2e тести
+- `docker-compose.yml` — локальна PostgreSQL
+- `.husky/` — git hooks
+- `eslint.config.mjs`, `prettier.config.cjs`, `jest.config.cjs` — конфіги інструментів
 
-### Репозиторій
+> Примітка: проєкт використовує ESM, тому в `src/` локальні імпорти між файлами можуть містити суфікс `.js` (для коректної роботи NodeNext/ESM).
 
-- GitHub repo: (додай посилання)
+## Передумови
 
----
+- Node.js **18+** (рекомендовано 20+)
+- pnpm **10+**
+- Docker + Docker Compose
 
-## Архітектура
+## Швидкий старт (локально)
 
-### Сервіси та роути (2×3)
-
-**1) user-service**
-
-- `POST /users` — створити користувача
-- `GET /users/:id` — отримати профіль
-- `PATCH /users/:id` — оновити профіль (вага/зріст/цілі)
-
-**2) workout-service**
-
-- `POST /workouts` — створити тренування (type, duration, userId)
-- `GET /workouts?userId=...` — список тренувань користувача
-- `PATCH /workouts/:id` — оновити/закрити тренування (notes, status)
-
-### Компонентна взаємодія
-
-```mermaid
-flowchart LR
-Client --> Users[user-service]
-Client --> Workouts[workout-service]
-Users --> DB1[(users db)]
-Workouts --> DB2[(workouts db)]
-Workouts --> Users
-```
-
----
-
-## Модель даних (чернетка)
-
-```mermaid
-erDiagram
-  USER ||--o{ WORKOUT : "має"
-
-  USER {
-    string id
-    string name
-    number weight
-    number height
-    string goal
-  }
-
-  WORKOUT {
-    string id
-    string userId
-    string type
-    number durationMin
-    string status
-    string notes
-    datetime createdAt
-  }
-```
-
----
-
-## Основні сценарії
-
-1. **Створити профіль**: `POST /users`
-2. **Додати тренування**: `POST /workouts` (workout-service перевіряє userId через user-service)
-3. **Перегляд історії**: `GET /workouts?userId=...`
-
----
-
-## Технології (план)
-
-- Node.js + TypeScript
-- Express (або NestJS)
-- PostgreSQL + Prisma (ЛР4)
-- Jest + Supertest, Playwright (E2E), Stryker (mutation)
-- Prettier + ESLint
-- Husky + lint-staged + commitlint (conventional commits)
-- GitHub Actions CI + CD на staging
-
----
-
-## Структура репозиторію (план)
-
-```text
-.
-├─ apps/
-│  ├─ user-service/
-│  └─ workout-service/
-├─ packages/
-│  └─ shared/
-├─ docker-compose.yml
-└─ .github/workflows/ci.yml
-```
-
----
-
-## Запуск локально (план)
+### 1) Встановити залежності
 
 ```bash
 pnpm i
-pnpm -r dev
 ```
 
+### 2) Налаштувати змінні середовища
+
+```bash
+cp .env.example .env
+```
+
+### 3) Запустити PostgreSQL
+
+```bash
+docker compose up -d
+```
+
+### 4) Міграції та генерація Prisma Client
+
+```bash
+pnpm prisma migrate dev
+pnpm prisma generate
+```
+
+### 5) Запуск застосунку
+
+```bash
+pnpm start:dev
+```
+
+API буде доступне за адресою: `http://localhost:3000`.
+
+## API (приклади запитів)
+
+### Створити користувача
+
+```bash
+curl -s -X POST http://localhost:3000/users   -H "content-type: application/json"   -d '{"name":"Alex","weight":75,"height":180,"goal":"cut"}'
+```
+
+### Отримати користувача
+
+```bash
+curl -s http://localhost:3000/users/<USER_ID>
+```
+
+### Оновити користувача
+
+```bash
+curl -s -X PATCH http://localhost:3000/users/<USER_ID>   -H "content-type: application/json"   -d '{"weight":74}'
+```
+
+### Додати тренування
+
+```bash
+curl -s -X POST http://localhost:3000/workouts   -H "content-type: application/json"   -d '{"userId":"<USER_ID>","type":"cardio","durationMin":30,"notes":"easy"}'
+```
+
+### Список тренувань користувача
+
+```bash
+curl -s "http://localhost:3000/workouts?userId=<USER_ID>"
+```
+
+### Оновити тренування (DONE)
+
+```bash
+curl -s -X PATCH http://localhost:3000/workouts/<WORKOUT_ID>   -H "content-type: application/json"   -d '{"status":"DONE","notes":"finished"}'
+```
+
+## Скрипти
+
+- `pnpm format` / `pnpm format:check` — форматування (Prettier)
+- `pnpm lint` — ESLint
+- `pnpm typecheck` — перевірка типів
+- `pnpm test` — unit тести
+- `pnpm test:e2e` — e2e тести
+- `pnpm build` — збірка
+
+## Git hooks та стиль комітів
+
+- **pre-commit**: `lint-staged`
+- **commit-msg**: `commitlint` (Conventional Commits)
+- **pre-push**: `test` + `build`
+
+Приклад повідомлення коміту:
+
+- `feat: add workouts endpoints`
+- `docs: update lab2 diagrams`
+- `chore: configure prisma migrations`
+
+## Лабораторні роботи
+
+- **ЛР0**: вибір ідеї + опис у README
+- **ЛР1**: налаштування інструментів (formatter/linter/hooks/tests/build)
+- **ЛР2**: структура застосунку + ER + сценарії (`docs/`)
+- **ЛР3–ЛР4**: реалізація основних сценаріїв та інтеграція з БД (PostgreSQL + Prisma)
+
 ---
 
-## Тести (план)
+### Ліцензія
 
-- Unit (user): валідації оновлення профілю
-- Unit (workout): правила статусів (open/closed)
-- Integration: workout-service + users-service (HTTP) + БД
-- E2E: “створити user → додати workout → отримати список”
-- Mutation: Stryker репорт
-
----
-
-## CI/CD (план)
-
-- CI на PR: format/lint/build/tests/commitlint
-- CD на main: автодеплой на staging, доступний URL
-
----
-
-## План виконання лабораторних
-
-- [ ] **ЛР0** Вибір ідеї, репозиторій, README
-- [ ] **ЛР1 (08.10.2025)** Пакети, prettier, eslint, hooks
-- [ ] **ЛР2 (22.10.2025)** Діаграми + ER + сценарії
-- [ ] **ЛР3 (05.11.2025)** Прототип (статичні дані)
-- [ ] **ЛР4 (19.11.2025)** БД інтеграція
-- [ ] **ЛР5 (03.12.2025)** Повне тестування + mutation репорт
-- [ ] **ЛР6 (17.12.2025)** CI/CD, staging, доступ з інтернету
-
----
-
-## Прогрес / нотатки
-
-- Дата:
-- Зроблено:
-- Далі:
-- PR/посилання:
+Навчальний проєкт.
