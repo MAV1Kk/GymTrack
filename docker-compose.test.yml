@@ -1,0 +1,19 @@
+services:
+  db_test:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: gymtrack
+      POSTGRES_PASSWORD: gymtrack
+      POSTGRES_DB: gymtrack_test
+    ports:
+      - '5433:5432'
+    volumes:
+      - db_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U gymtrack -d gymtrack_test']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  db_test_data:
