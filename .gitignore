@@ -2,8 +2,14 @@ node_modules
 dist
 coverage
 .env
+.env.test
 .DS_Store
 
 /src/generated/prisma
 
 /src/generated/prisma
+
+# Stryker
+.reports/
+reports/
+.stryker-tmp/

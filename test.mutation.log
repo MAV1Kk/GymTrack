@@ -1,0 +1,46 @@
+
+> gymtrack@0.0.1 test:mutation /Users/pliffdax/Projects/university/GymTrack
+> stryker run
+
+[33m12:55:35 (93902) WARN OptionsValidator[39m Unknown stryker config option "jest".
+[33m12:55:35 (93902) WARN OptionsValidator[39m Possible causes:
+     * Is it a typo on your end?
+     * Did you only write this property as a comment? If so, please postfix it with "_comment".
+     * You might be missing a plugin that is supposed to use it. Stryker loaded plugins from: ["@stryker-mutator/*"]
+     * The plugin that is using it did not contribute explicit validation. 
+     (disable "warnings.unknownOptions" to ignore this warning)
+[32m12:55:35 (93902) INFO ProjectReader[39m Found 1 of 104 file(s) to be mutated.
+[32m12:55:35 (93902) INFO Instrumenter[39m Instrumented 1 source file(s) with 23 mutant(s)
+[32m12:55:35 (93902) INFO ConcurrencyTokenProvider[39m Creating 5 checker process(es) and 4 test runner process(es).
+[91m12:55:35 (93902) ERROR Stryker[39m Unexpected error occurred while running Stryker StrykerError: Error: Could not inject [class CheckerWorker]. Cause: Cannot find Checker plugin "typescript". In fact, no Checker plugins were loaded. Did you forget to install it?
+Error: Could not inject [class CheckerWorker]. Cause: Cannot find Checker plugin "typescript". In fact, no Checker plugins were loaded. Did you forget to install it?
+    at InjectionError.create (file:///Users/pliffdax/Projects/university/GymTrack/node_modules/.pnpm/typed-inject@5.0.0/node_modules/typed-inject/dist/src/errors.js:53:20)
+    at ClassProvider.injectClass (file:///Users/pliffdax/Projects/university/GymTrack/node_modules/.pnpm/typed-inject@5.0.0/node_modules/typed-inject/dist/src/InjectorImpl.js:45:34)
+    at ChildProcessProxyWorker.handleInit (file:///Users/pliffdax/Projects/university/GymTrack/node_modules/.pnpm/@stryker-mutator+core@9.4.0_@types+node@22.19.3/node_modules/@stryker-mutator/core/dist/src/child-proxy/child-process-proxy-worker.js:75:41)
+    at ChildProcess.<anonymous> (file:///Users/pliffdax/Projects/university/GymTrack/node_modules/.pnpm/@stryker-mutator+core@9.4.0_@types+node@22.19.3/node_modules/@stryker-mutator/core/dist/src/child-proxy/child-process-proxy.js:132:39)
+    at ChildProcess.emit (node:events:518:28)
+    at emit (node:internal/child_process:949:14)
+    at process.processTicksAndRejections (node:internal/process/task_queues:91:21) {
+  innerError: undefined
+}
+[32m12:55:35 (93902) INFO Stryker[39m This might be a known problem with a solution documented in our troubleshooting guide.
+[32m12:55:35 (93902) INFO Stryker[39m You can find it at https://stryker-mutator.io/docs/stryker-js/troubleshooting/
+[32m12:55:35 (93902) INFO Stryker[39m Still having trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.
+node:internal/process/promises:394
+    triggerUncaughtException(err, true /* fromPromise */);
+    ^
+
+StrykerError: Error: Could not inject [class CheckerWorker]. Cause: Cannot find Checker plugin "typescript". In fact, no Checker plugins were loaded. Did you forget to install it?
+Error: Could not inject [class CheckerWorker]. Cause: Cannot find Checker plugin "typescript". In fact, no Checker plugins were loaded. Did you forget to install it?
+    at InjectionError.create (file:///Users/pliffdax/Projects/university/GymTrack/node_modules/.pnpm/typed-inject@5.0.0/node_modules/typed-inject/dist/src/errors.js:53:20)
+    at ClassProvider.injectClass (file:///Users/pliffdax/Projects/university/GymTrack/node_modules/.pnpm/typed-inject@5.0.0/node_modules/typed-inject/dist/src/InjectorImpl.js:45:34)
+    at ChildProcessProxyWorker.handleInit (file:///Users/pliffdax/Projects/university/GymTrack/node_modules/.pnpm/@stryker-mutator+core@9.4.0_@types+node@22.19.3/node_modules/@stryker-mutator/core/dist/src/child-proxy/child-process-proxy-worker.js:75:41)
+    at ChildProcess.<anonymous> (file:///Users/pliffdax/Projects/university/GymTrack/node_modules/.pnpm/@stryker-mutator+core@9.4.0_@types+node@22.19.3/node_modules/@stryker-mutator/core/dist/src/child-proxy/child-process-proxy.js:132:39)
+    at ChildProcess.emit (node:events:518:28)
+    at emit (node:internal/child_process:949:14)
+    at process.processTicksAndRejections (node:internal/process/task_queues:91:21) {
+  innerError: undefined
+}
+
+Node.js v22.16.0
+ ELIFECYCLE  Command failed with exit code 1.
