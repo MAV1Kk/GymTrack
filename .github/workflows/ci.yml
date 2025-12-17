@@ -16,6 +16,10 @@ jobs:
   ci:
     runs-on: ubuntu-latest
 
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://gymtrack:gymtrack@localhost:5433/gymtrack_test?schema=public
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,6 +38,9 @@ jobs:
       - name: Install deps
         run: pnpm i --frozen-lockfile
 
+      - name: Prisma generate
+        run: pnpm prisma generate
+
       - name: Format check
         run: pnpm -s format:check
 
@@ -41,10 +48,20 @@ jobs:
         run: pnpm -s lint
 
       - name: Unit tests
-        run: pnpm -s test
+        run: pnpm -s test:unit
 
-      - name: E2E tests (with docker compose)
+      - name: Start test DB (docker compose)
+        run: pnpm -s db:test:up
+
+      - name: Migrate test DB
+        run: pnpm prisma migrate deploy
+
+      - name: E2E tests
         run: pnpm -s test:e2e
+
+      - name: Stop test DB
+        if: always()
+        run: pnpm -s db:test:down
 
       - name: Build
         run: pnpm -s build
