@@ -16,11 +16,15 @@
     "test": "NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.cjs",
     "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.cjs --watch",
     "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.cjs",
-    "test:e2e": "NODE_OPTIONS=--experimental-vm-modules jest --config test/jest-e2e.json",
-    "test:mutation": "stryker run",
     "db:test:up": "docker compose -f docker-compose.test.yml up -d --wait",
     "db:test:down": "docker compose -f docker-compose.test.yml down -v",
-    "test:all": "pnpm -s lint && pnpm -s format:check && pnpm -s test && pnpm -s test:e2e && pnpm -s build",
+    "db:test:migrate": "prisma migrate deploy",
+    "db:test:reset": "prisma migrate reset --force --skip-seed",
+    "test:e2e": "NODE_OPTIONS=--experimental-vm-modules jest --config test/jest-e2e.json",
+    "test:e2e:ci": "pnpm -s db:test:up && pnpm -s db:test:migrate && pnpm -s test:e2e ; pnpm -s db:test:down",
+    "test:mutation": "stryker run",
+    "check": "pnpm -s format:check && pnpm -s lint && pnpm -s typecheck",
+    "test:all": "pnpm -s check && pnpm -s test:unit && pnpm -s test:e2e:ci && pnpm -s build",
     "prepare": "husky"
   },
   "dependencies": {
