@@ -16,30 +16,26 @@ jobs:
   ci:
     runs-on: ubuntu-latest
 
-    env:
-      NODE_ENV: test
-      DATABASE_URL: postgresql://gymtrack:gymtrack@localhost:5433/gymtrack_test?schema=public
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22.16.0
           cache: pnpm
+
+      - name: Enable pnpm (corepack)
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.16.0 --activate
+          pnpm -v
 
       - name: Install deps
         run: pnpm i --frozen-lockfile
-
-      - name: Prisma generate
-        run: pnpm prisma generate
 
       - name: Format check
         run: pnpm -s format:check
@@ -47,21 +43,15 @@ jobs:
       - name: Lint
         run: pnpm -s lint
 
-      - name: Start test DB (docker compose)
-        run: pnpm -s db:test:up
-
-      - name: Migrate test DB
-        run: pnpm prisma migrate deploy
-
       - name: Unit tests
-        run: pnpm test:unit
+        run: pnpm -s test:unit
 
-      - name: E2E tests
-        run: pnpm -s test:e2e
-
-      - name: Stop test DB
-        if: always()
-        run: pnpm -s db:test:down
+      - name: E2E tests (with docker compose)
+        env:
+          DATABASE_URL: postgresql://gymtrack:gymtrack@localhost:5433/gymtrack_test?schema=public
+        run: |
+          docker compose -f docker-compose.test.yml up -d --wait
+          pnpm -s test:e2e
 
       - name: Build
         run: pnpm -s build
