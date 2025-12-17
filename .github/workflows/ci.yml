@@ -47,14 +47,14 @@ jobs:
       - name: Lint
         run: pnpm -s lint
 
-      - name: Unit tests
-        run: pnpm -s test:unit
-
       - name: Start test DB (docker compose)
         run: pnpm -s db:test:up
 
       - name: Migrate test DB
         run: pnpm prisma migrate deploy
+
+      - name: Unit tests
+        run: pnpm test:unit
 
       - name: E2E tests
         run: pnpm -s test:e2e
